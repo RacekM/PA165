@@ -34,7 +34,7 @@ public class CarShopStorageServiceImpl implements CarShopStorageService {
 		Map<CarTypes, List<Car>> allCars = CarShopStorage.getInstancce().getCars();
 		List<Car> carsOfTheType = allCars.get(car.getType());
 
-		if(!carsOfTheType.remove(car)){
+		if(carsOfTheType == null  | !carsOfTheType.remove(car)){
 			throw new RequestedCarNotFoundException("The requested car can not be found");
 		}
 	}
