@@ -27,19 +27,19 @@ public class CurrencyConvertorImpl implements CurrencyConvertor {
         BigDecimal exchangeRate;
         logger.trace("Conversion of {} {} to {}", sourceAmount, sourceCurrency, targetCurrency);
 
-        if(null == sourceAmount || sourceCurrency == null || targetCurrency == null){
-            throw new IllegalArgumentException("SourceAmount cant be null");
+        if (sourceAmount == null || sourceCurrency == null || targetCurrency == null) {
+            throw new IllegalArgumentException("Attributes cant be null");
         }
 
         try {
             exchangeRate = exchangeRateTable.getExchangeRate(sourceCurrency, targetCurrency);
-            if (null == exchangeRate){
+            if (exchangeRate == null) {
                 logger.debug("Exchange rate for given currencies ({}, {}) is not available", sourceCurrency, targetCurrency);
                 throw new UnknownExchangeRateException("Exchange rate for given currencies is not available");
             }
         } catch (ExternalServiceFailureException e) {
             logger.error("Conversion failed for currencies {} and {}", sourceCurrency, targetCurrency);
-            throw new UnknownExchangeRateException(e.getMessage());
+            throw new UnknownExchangeRateException(e);
         }
 
         return exchangeRate.multiply(sourceAmount).setScale(2, RoundingMode.HALF_EVEN);
