@@ -24,7 +24,7 @@ public class MainJavaSe {
 		emf = Persistence.createEntityManagerFactory("default");
 		try {
 			// BEGIN YOUR CODE
-			task04();
+			task05();
 			// END YOUR CODE
 		} finally {
 			emf.close();
