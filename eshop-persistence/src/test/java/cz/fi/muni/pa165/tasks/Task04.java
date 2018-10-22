@@ -201,7 +201,8 @@ public class Task04 extends AbstractTestNGSpringContextTests {
 	@Test
 	public void leftJoinCagesWithPets() {
 		EntityManager em = emf.createEntityManager();
-		List<ProductAndCategory> productAndCategory = em.createQuery("select new cz.fi.muni.pa165.tasks.ProductAndCategory(p, c) from Product p left join Category c on c.name = Kitchen",ProductAndCategory.class).getResultList();
+		List<ProductAndCategory> productAndCategory = em.createQuery("select new cz.fi.muni.pa165.tasks.ProductAndCategory(p, c) from Product p left join p.categories c on c.name = :kitchen order by p.name",ProductAndCategory.class)
+				.setParameter("kitchen", "Kitchen").getResultList();
 		
 		Assert.assertEquals(productAndCategory.size(), 5);
 		
