@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import cz.fi.muni.pa165.PersistenceSampleApplicationContext;
@@ -24,9 +25,105 @@ public class Task02 extends AbstractTestNGSpringContextTests {
 	@PersistenceUnit
 	private EntityManagerFactory emf;
 
-	
+	private Product flashlight;
+	private Product plate;
+	private Product kitchenRobot;
+	private Category tool;
+	private Category kitchen;
+
+	@BeforeClass
+	public void setUp() {
+		tool = new Category();
+		tool.setName("tool");
+		kitchen = new Category();
+		kitchen.setName("kitchen");
+		flashlight = new Product();
+		flashlight.setName("flashLight");
+		plate = new Product();
+		plate.setName("plate");
+		kitchenRobot = new Product();
+		kitchenRobot.setName("kitchenRobot");
+		flashlight.addCategory(tool);
+		kitchenRobot.addCategory(kitchen);
+		plate.addCategory(kitchen);
+
+
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
+		em.persist(kitchen);
+		em.persist(tool);
+		em.persist(plate);
+		em.persist(flashlight);
+		em.persist(kitchenRobot);
+		em.getTransaction().commit();
+		em.close();
+
+
+	}
+
+	@Test
+	public void testFlashlight() {
+		EntityManager em  = emf.createEntityManager();
+		em.getTransaction().begin();
+		Product product = em.find(Product.class, flashlight.getId());
+		assertContainsCategoryWithName(product.getCategories(), "tool");
+		em.getTransaction().commit();
+		em.close();
+	}
+
+	@Test
+	public void testPlate() {
+		EntityManager em  = emf.createEntityManager();
+		em.getTransaction().begin();
+		Product product = em.find(Product.class, plate.getId());
+		assertContainsCategoryWithName(product.getCategories(), "kitchen");
+		em.getTransaction().commit();
+		em.close();
+	}
+
+	@Test
+	public void testKitchenRobot() {
+		EntityManager em  = emf.createEntityManager();
+		em.getTransaction().begin();
+		Product product = em.find(Product.class, kitchenRobot.getId());
+		assertContainsCategoryWithName(product.getCategories(), "kitchen");
+		em.getTransaction().commit();
+		em.close();
+	}
+
+	@Test
+	public void testTool() {
+		EntityManager em  = emf.createEntityManager();
+		em.getTransaction().begin();
+		Category category = em.find(Category.class, tool.getId());
+		assertContainsProductWithName(category.getProducts(), "flashLight");
+		em.getTransaction().commit();
+		em.close();
+	}
+
+	@Test
+	public void testKitchen() {
+		EntityManager em  = emf.createEntityManager();
+		em.getTransaction().begin();
+		Category category = em.find(Category.class, kitchen.getId());
+		assertContainsProductWithName(category.getProducts(), "plate");
+		em.getTransaction().commit();
+		em.close();
+	}
+
+	@Test(expectedExceptions=ConstraintViolationException.class)
+	public void testDoesntSaveNullName(){
+		EntityManager em = emf.createEntityManager();
+		em.getTransaction().begin();
+		Product p = new Product();
+		p.setName(null);
+		em.persist(p);
+		em.getTransaction().commit();
+		em.close();
+	}
+
 	private void assertContainsCategoryWithName(Set<Category> categories,
-			String expectedCategoryName) {
+												String expectedCategoryName) {
 		for(Category cat: categories){
 			if (cat.getName().equals(expectedCategoryName))
 				return;

@@ -2,6 +2,7 @@ package cz.fi.muni.pa165.tasks;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 
 import org.springframework.test.context.ContextConfiguration;
@@ -12,9 +13,10 @@ import org.testng.annotations.Test;
 import cz.fi.muni.pa165.PersistenceSampleApplicationContext;
 import cz.fi.muni.pa165.entity.Category;
 
+import static org.testng.AssertJUnit.assertEquals;
 
-
-public class Task01  {
+@ContextConfiguration(classes = PersistenceSampleApplicationContext.class)
+public class Task01 extends AbstractTestNGSpringContextTests  {
 
 	
 	@PersistenceUnit
@@ -30,6 +32,10 @@ public class Task01  {
 		em.getTransaction().commit();
 		em.close();
 		//TODO under this line: create a second entity manager in categoryTest, use find method to find the category and assert its name.
+		em = emf.createEntityManager();
+		cat = em.find(Category.class , cat.getId());
+		assertEquals("Test", cat.getName());
+		em.close();
 	}
 
 }
