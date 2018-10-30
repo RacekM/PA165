@@ -81,6 +81,10 @@ html>body #navigation li a {
     color: #fff;
 }
 
+footer{
+    background-color: #5ba3e0;
+}
+
 /*  http://realworldstyle.com/2col.html */
 #navigation {
     width: 120px;

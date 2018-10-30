@@ -8,23 +8,18 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
-/**
- * Filter that sets character encoding of all incoming requests to UTF-8.
- * Otherwise default is iso-8859-1 which does not contain Czech characters.
- *
- * @author Martin Kuba makub@ics.muni.cz
- */
 @WebFilter("/*")
-public class CharacterEncodingFilter implements Filter {
-
+public class AddCurrentYearFilter implements Filter {
     final static Logger log = LoggerFactory.getLogger(CharacterEncodingFilter.class);
 
     public void doFilter(ServletRequest r, ServletResponse s, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) r;
         HttpServletResponse response = (HttpServletResponse) s;
-        log.trace(String.valueOf(((HttpServletRequest) r).getRequestURL()));
-        request.setCharacterEncoding("utf-8");
+        request.setAttribute("currentyear",new SimpleDateFormat("yyyy",request.getLocale()).format(new Date()));
         filterChain.doFilter(request, response);
     }
 
